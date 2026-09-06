@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788680427260,
+      "tag": "0000_fat_mariko_yashida",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788680706605,
+      "tag": "0001_rare_scourge",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788680831262,
+      "tag": "0002_zippy_magma",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788681107882,
+      "tag": "0003_slim_marten_broadcloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788681400319,
+      "tag": "0004_optimal_blizzard",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788681531474,
+      "tag": "0005_watery_victor_mancha",
+      "breakpoints": true
+    }
+  ]
+}

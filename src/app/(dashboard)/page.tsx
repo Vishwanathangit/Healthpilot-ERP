@@ -1,15 +1,23 @@
 import React from "react";
-import { checkDbConnection } from "@/db";
+import { db } from "@/db";
+import { sql } from "drizzle-orm";
 import { PRODUCT_DETAILS } from "@/lib/constants";
-import { Database, Pill, ShieldCheck, Building, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Database, Pill, ShieldCheck, Building, CheckCircle2 } from "lucide-react";
 
 export default async function DashboardPage() {
-  const dbStatus = await checkDbConnection();
+  let dbStatus = { success: false, message: "" };
+  try {
+    await db.execute(sql`SELECT 1`);
+    dbStatus = { success: true, message: "Connected to Supabase PostgreSQL database." };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    dbStatus = { success: false, message: `Database error: ${msg}` };
+  }
 
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+      <div className="bg-linear-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">

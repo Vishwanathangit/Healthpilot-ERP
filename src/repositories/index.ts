@@ -1,2 +1,17 @@
-// Data access layer wrapping Drizzle queries per entity
-export {};
+export * from "./employeeRepository";
+export * from "./locationRepository";
+export * from "./productRepository";
+export * from "./supplierRepository";
+export * from "./batchRepository";
+export * from "./requisitionRepository";
+export * from "./purchaseOrderRepository";
+export * from "./purchaseOrderLineRepository";
+export * from "./goodsReceiptRepository";
+export * from "./goodsReceiptLineRepository";
+export * from "./goodsReceiptCorrectionRepository";
+export * from "./supplierInvoiceRepository";
+export * from "./invoiceMatchRepository";
+export * from "./creditNoteRepository";
+export * from "./stockTransferRepository";
+export * from "./salesRepository";
+export * from "./stockLedgerRepository";
