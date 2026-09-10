@@ -123,8 +123,11 @@ export const invoiceMatchingService = {
     const disputedAmount = invoiceAmountNum - payableAmount;
     const status = Math.abs(disputedAmount) < 0.01 ? "matched" : "disputed";
 
+    const quantityVariance = supplierInvoice.invoiceQuantity - totalAcceptedQuantity;
+    const priceVariance = disputedAmount;
+
     // 6. Create invoice match record
-    return await invoiceMatchRepository.create({
+    const matchRecord = await invoiceMatchRepository.create({
       supplierInvoiceId: supplierInvoice.id,
       goodsReceiptId: goodsReceipt.id,
       acceptedValue: acceptedValue.toFixed(2),
@@ -133,6 +136,16 @@ export const invoiceMatchingService = {
       disputedAmount: disputedAmount.toFixed(2),
       status,
     });
+
+    return {
+      ...matchRecord,
+      purchaseOrderId: goodsReceipt.purchaseOrderId,
+      quantityVariance,
+      priceVariance,
+      acceptedQuantity: totalAcceptedQuantity,
+      invoiceQuantity: supplierInvoice.invoiceQuantity,
+      invoiceAmount: supplierInvoice.invoiceAmount,
+    } as any;
   },
 
   async recordCreditNote(

@@ -30,9 +30,9 @@ export async function POST(request: Request) {
       productId,
       batchId,
       quantity,
-      dispatchedBy,
       dispatchedAt,
     } = body;
+    const dispatchedBy = body.dispatchedBy || body.transferredBy;
 
     if (
       !sourceLocationId ||

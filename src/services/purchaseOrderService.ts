@@ -25,6 +25,14 @@ export interface CreatePOResult {
   purchaseOrderLine: PurchaseOrderLine;
 }
 
+import { locationRepository } from "@/repositories/locationRepository";
+import { supplierRepository } from "@/repositories/supplierRepository";
+
+export interface EnrichedPurchaseOrder extends PurchaseOrder {
+  deliveryLocationName?: string;
+  supplierName?: string;
+}
+
 export const purchaseOrderService = {
   async generatePoNumber(): Promise<string> {
     const allPOs = await purchaseOrderRepository.findAll();
@@ -90,7 +98,20 @@ export const purchaseOrderService = {
     return await purchaseOrderRepository.findWithLines(id);
   },
 
-  async listAllPurchaseOrders(): Promise<PurchaseOrder[]> {
-    return await purchaseOrderRepository.findAll();
+  async listAllPurchaseOrders(): Promise<EnrichedPurchaseOrder[]> {
+    const pos = await purchaseOrderRepository.findAll();
+    const [locationsList, suppliersList] = await Promise.all([
+      locationRepository.findAll(),
+      supplierRepository.findAll(),
+    ]);
+
+    const locationMap = new Map(locationsList.map((l) => [l.id, l.name]));
+    const supplierMap = new Map(suppliersList.map((s) => [s.id, s.name]));
+
+    return pos.map((po) => ({
+      ...po,
+      deliveryLocationName: locationMap.get(po.deliveryLocationId) || `Location #${po.deliveryLocationId}`,
+      supplierName: supplierMap.get(po.supplierId) || `Supplier #${po.supplierId}`,
+    }));
   },
 };

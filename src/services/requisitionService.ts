@@ -2,6 +2,13 @@ import {
   requisitionRepository,
   Requisition,
 } from "@/repositories/requisitionRepository";
+import { locationRepository } from "@/repositories/locationRepository";
+import { productRepository } from "@/repositories/productRepository";
+
+export interface EnrichedRequisition extends Requisition {
+  locationName: string;
+  productName: string;
+}
 
 export interface CreateRequisitionInput {
   locationId: number;
@@ -68,11 +75,29 @@ export const requisitionService = {
     return updated;
   },
 
-  async listRequisitionsByLocation(locationId: number): Promise<Requisition[]> {
-    return await requisitionRepository.findByLocation(locationId);
+  async enrichRequisitions(reqs: Requisition[]): Promise<EnrichedRequisition[]> {
+    const [locationsList, productsList] = await Promise.all([
+      locationRepository.findAll(),
+      productRepository.findAll(),
+    ]);
+
+    const locationMap = new Map(locationsList.map((l) => [l.id, l.name]));
+    const productMap = new Map(productsList.map((p) => [p.id, p.name]));
+
+    return reqs.map((req) => ({
+      ...req,
+      locationName: locationMap.get(req.locationId) || `Location #${req.locationId}`,
+      productName: productMap.get(req.productId) || `Product #${req.productId}`,
+    }));
   },
 
-  async listAllRequisitions(): Promise<Requisition[]> {
-    return await requisitionRepository.findAll();
+  async listRequisitionsByLocation(locationId: number): Promise<EnrichedRequisition[]> {
+    const reqs = await requisitionRepository.findByLocation(locationId);
+    return await this.enrichRequisitions(reqs);
+  },
+
+  async listAllRequisitions(): Promise<EnrichedRequisition[]> {
+    const reqs = await requisitionRepository.findAll();
+    return await this.enrichRequisitions(reqs);
   },
 };

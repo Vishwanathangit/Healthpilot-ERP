@@ -16,8 +16,13 @@ export interface LocationStockSummary {
   locationId: number;
   locationName: string;
   productId: number;
+  productName?: string;
   batchId: number;
+  batchNumber?: string;
   usableStock: number;
+  availableQuantity?: number;
+  reservedQuantity?: number;
+  totalQuantity?: number;
 }
 
 export interface StockPositionSummary {
@@ -106,8 +111,15 @@ export const stockLedgerService = {
    */
   async getStockSummaryByLocation(): Promise<LocationStockSummary[]> {
     const allRows = await stockLedgerRepository.findAll();
-    const locationsList = await locationRepository.findAll();
+    const [locationsList, productsList, batchesList] = await Promise.all([
+      locationRepository.findAll(),
+      productRepository.findAll(),
+      batchRepository.findAll(),
+    ]);
+
     const locationMap = new Map(locationsList.map((l) => [l.id, l.name]));
+    const productMap = new Map(productsList.map((p) => [p.id, p.name]));
+    const batchMap = new Map(batchesList.map((b) => [b.id, b.batchNumber]));
 
     const comboKeys = new Set<string>();
     const combos: Array<{ locationId: number; productId: number; batchId: number }> = [];
@@ -135,8 +147,13 @@ export const stockLedgerService = {
         locationId: combo.locationId,
         locationName: locationMap.get(combo.locationId) || `Location #${combo.locationId}`,
         productId: combo.productId,
+        productName: productMap.get(combo.productId) || `Product #${combo.productId}`,
         batchId: combo.batchId,
+        batchNumber: batchMap.get(combo.batchId) || `Batch #${combo.batchId}`,
         usableStock,
+        availableQuantity: usableStock,
+        reservedQuantity: 0,
+        totalQuantity: usableStock,
       });
     }
     return result;

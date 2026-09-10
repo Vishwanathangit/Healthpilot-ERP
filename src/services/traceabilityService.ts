@@ -31,11 +31,17 @@ export interface StockTransferTraceability {
   sales: Sale[];
 }
 
+export interface DirectSaleTraceability {
+  sale: Sale;
+}
+
 export interface PurchaseOrderTraceability {
   purchaseOrder: PurchaseOrderWithLines;
   goodsReceipts: GoodsReceiptTraceability[];
   supplierInvoices: SupplierInvoiceTraceability[];
   stockTransfers: StockTransferTraceability[];
+  directSales?: Sale[];
+  allSales?: Sale[];
 }
 
 export interface RequisitionTraceability {
@@ -105,18 +111,29 @@ export const traceabilityService = {
 
       // 6. Fetch linked Stock Transfers and Sales for batches in this PO
       const stockTransfersTraceability: StockTransferTraceability[] = [];
+      const allSalesMap = new Map<number, Sale>();
 
       for (const batchId of Array.from(batchIds)) {
+        // Fetch transfers
         const transfers = await stockTransferRepository.findByBatchId(batchId);
         for (const transfer of transfers) {
           const linkedSales = await salesRepository.findByLocationAndBatch(
             transfer.destinationLocationId,
             batchId
           );
+          for (const s of linkedSales) {
+            allSalesMap.set(s.id, s);
+          }
           stockTransfersTraceability.push({
             transfer,
             sales: linkedSales,
           });
+        }
+
+        // Fetch ALL direct sales for batch (regardless of whether transferred or direct GRN delivery)
+        const batchSales = await salesRepository.findByBatchId(batchId);
+        for (const s of batchSales) {
+          allSalesMap.set(s.id, s);
         }
       }
 
@@ -125,6 +142,7 @@ export const traceabilityService = {
         goodsReceipts: goodsReceiptsTraceability,
         supplierInvoices: supplierInvoicesTraceability,
         stockTransfers: stockTransfersTraceability,
+        allSales: Array.from(allSalesMap.values()),
       });
     }
 

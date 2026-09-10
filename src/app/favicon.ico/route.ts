@@ -1,0 +1,15 @@
+import { NextResponse } from "next/server";
+
+export async function GET() {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="8" fill="#0F6E6E"/>
+  <path d="M10.5 21.5L21.5 10.5M10.5 21.5A5.5 5.5 0 0 1 10.5 13.7L13.7 10.5A5.5 5.5 0 0 1 21.5 10.5M10.5 21.5A5.5 5.5 0 0 0 18.3 21.5L21.5 18.3A5.5 5.5 0 0 0 21.5 10.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>`;
+
+  return new NextResponse(svg, {
+    headers: {
+      "Content-Type": "image/svg+xml",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
+}

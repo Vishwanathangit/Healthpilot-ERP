@@ -25,9 +25,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { locationId, productId, quantity, requiredDate, requestedBy, reason } = body;
 
-    if (!locationId || !productId || !quantity || !requiredDate || !requestedBy) {
+    const missingFields: string[] = [];
+    if (!locationId) missingFields.push("locationId (Requesting location)");
+    if (!productId) missingFields.push("productId (Medication product)");
+    if (!quantity) missingFields.push("quantity");
+    if (!requiredDate) missingFields.push("requiredDate");
+    if (!requestedBy) missingFields.push("requestedBy (Requesting employee)");
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { success: false, error: "Missing required fields for requisition creation." },
+        {
+          success: false,
+          error: `Missing required fields for requisition creation: ${missingFields.join(", ")}.`,
+        },
         { status: 400 }
       );
     }

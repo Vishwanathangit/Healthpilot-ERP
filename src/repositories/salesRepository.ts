@@ -19,6 +19,10 @@ export const salesRepository = {
     return await db.select().from(sales).where(eq(sales.locationId, locationId));
   },
 
+  async findByBatchId(batchId: number): Promise<Sale[]> {
+    return await db.select().from(sales).where(eq(sales.batchId, batchId));
+  },
+
   async findByLocationAndBatch(locationId: number, batchId: number): Promise<Sale[]> {
     return await db
       .select()
