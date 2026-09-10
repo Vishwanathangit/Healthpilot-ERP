@@ -2,7 +2,7 @@
 
 A full-stack hospital pharmacy supply chain ERP system tracking the complete lifecycle of pharmaceutical stock: branch requisitions, purchase orders, goods receipts with damage/shortage handling and audit-trail corrections, supplier invoice 3-way matching, inter-location stock transfers, and patient dispensing — with full traceability from request to sale.
 
-**Live Link:** [https://your-deployment-url-here.vercel.app](https://your-deployment-url-here.vercel.app) *(placeholder — replace after deployment)*
+**Live Link:** [https://healthpilot-erp.vercel.app](https://healthpilot-erp.vercel.app)
 
 ---
 
